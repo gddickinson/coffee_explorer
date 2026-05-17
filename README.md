@@ -483,3 +483,7 @@ Product and company information synthesized from publicly available sources.
 **Last Updated**: January 2026
 
 Enjoy exploring the wonderful world of coffee! ☕
+
+
+---
+*Built with AI assistance from [Claude (Anthropic)](https://claude.com/).*
