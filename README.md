@@ -473,3 +473,17 @@ Potential improvements for future versions:
 ## License
 
 Released under the [MIT licence](LICENSE).
+
+Coffee data compiled from public domain sources and general knowledge.
+Product and company information synthesized from publicly available sources.
+
+---
+
+**Version**: 1.0
+**Last Updated**: January 2026
+
+Enjoy exploring the wonderful world of coffee! ☕
+
+
+---
+*Built with AI assistance from [Claude (Anthropic)](https://claude.com/).*
