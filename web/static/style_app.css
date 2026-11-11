@@ -1,0 +1,49 @@
+/* Coffee Collection Explorer: caramel / cherry / teal accents and page styles on top of the shared style.css. */
+:root { --accent:#ffb454; --accent2:#ff6b6b; --accent3:#4fd1c5; --glow:rgba(255,180,84,.13); --bg:#08060a; --panel:#140f14; }
+.mark { border-color:var(--accent); }
+main:focus, main:focus-visible { outline:none; }
+.filters { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:10px 14px; align-items:end; }
+.filters .fq { grid-column:span 2; }
+.filters label { margin-top:0; }
+.fchk label { display:flex; gap:6px; align-items:center; color:var(--ink); padding-bottom:8px; }
+.freset button { margin:0; }
+.card .meta { display:flex; justify-content:space-between; gap:8px; font:12px var(--mono); color:var(--mute); margin-top:8px; }
+.card .meta span { display:inline; margin:0; font-size:12px; color:var(--mute); }
+.card .score { color:var(--accent) !important; }
+.door b .n { font:600 13px var(--mono); color:var(--accent); font-style:normal; margin-left:6px; }
+.seg-specialty { color:var(--accent3) !important; } .seg-premium { color:var(--accent) !important; } .seg-mass-market { color:var(--accent2) !important; }
+a.tile { color:var(--ink); } a.tile:hover { text-decoration:none; box-shadow:0 0 18px var(--glow); }
+.kv { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:10px; margin:16px 0; }
+.kv div { background:rgba(20,15,20,.85); border:1px solid var(--line); border-radius:4px; padding:10px 12px; }
+.kv b { display:block; font:600 15px var(--mono); color:var(--ink); overflow-wrap:anywhere; }
+.kv span { font-size:12px; color:var(--mute); }
+.side.rev { grid-template-columns:1fr 340px; }
+.timer .clock { font-size:56px; text-align:center; color:var(--accent); text-shadow:0 0 24px var(--glow); letter-spacing:.05em; }
+.stage.map { display:block; background:#0b1220; margin:10px 0; }
+svg.world { display:block; width:100%; height:auto; }
+svg.world .land { fill:#2a2230; stroke:#5b4a5e; stroke-width:1; }
+svg.world .belt { fill:rgba(255,180,84,.06); }
+svg.world .tropic { stroke:rgba(255,180,84,.35); stroke-dasharray:4 5; }
+svg.world .equator { stroke:rgba(79,209,197,.25); }
+svg.world .axisl { fill:var(--mute); font:11px var(--mono); }
+svg.world .pin .halo { fill:rgba(255,107,107,.25); }
+svg.world .pin .dot { fill:var(--accent2); stroke:#fff; stroke-width:1.2; }
+svg.world .pin:hover .dot, svg.world .pin:focus .dot, svg.world .pin.on .dot { fill:var(--accent); }
+svg.world .pin.on .halo { fill:rgba(255,180,84,.35); }
+.doc { grid-template-columns:260px 1fr; }
+.toc { position:sticky; top:80px; max-height:calc(100vh - 100px); overflow:auto; margin:0; }
+.toc nav a { display:block; font-size:13px; padding:3px 0; color:var(--mute); }
+.toc nav a:hover { color:var(--accent); }
+.md h2 { font-size:32px; color:var(--ink); margin-top:0; }
+.md h3 { font:600 23px/1.3 var(--sans); text-transform:none; letter-spacing:0; color:var(--accent); margin:30px 0 8px; }
+.md h4 { font:600 14px var(--mono); text-transform:uppercase; letter-spacing:.08em; color:var(--accent2); margin:20px 0 6px; }
+.md h5 { font-size:15px; color:var(--accent3); margin:14px 0 4px; }
+.md hr { border:0; border-top:1px solid var(--line); margin:22px 0; }
+.md li { margin:2px 0; } .md strong { color:#fff3e0; }
+.entry b { font-size:18px; margin:0 6px; } .stars { color:var(--accent); letter-spacing:2px; }
+.callout { margin:16px 0; }
+@media (max-width:760px) {
+  .filters { grid-template-columns:1fr 1fr; } .filters .fq { grid-column:1 / -1; } .filters select { min-width:0; }
+  .side.rev, .doc { grid-template-columns:1fr; } .toc { position:static; max-height:240px; }
+  .timer .clock { font-size:44px; }
+}

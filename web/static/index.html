@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coffee Collection Explorer</title>
+<meta name="description" content="Browse and search coffee origins, varieties, roasters and brands, brewing methods and growing regions, with a coffee guide and history.">
+<link rel="icon" href="static/icon.svg">
+<link rel="stylesheet" href="static/style.css">
+<link rel="stylesheet" href="static/style_app.css">
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<header class="top">
+  <a class="brand" href="#/"><span class="mark"></span>Coffee Explorer</a>
+  <nav class="groups" aria-label="Main">
+    <details><summary>Database</summary><div class="menu">
+      <a href="#/coffees" data-nav="coffees">Coffee origins</a>
+      <a href="#/varieties" data-nav="varieties">Varieties</a>
+      <a href="#/roasters" data-nav="roasters">Roasters and brands</a>
+      <a href="#/products" data-nav="products">Products</a>
+    </div></details>
+    <details><summary>Brew</summary><div class="menu">
+      <a href="#/brewing" data-nav="brewing">Brewing methods</a>
+      <a href="#/timer" data-nav="timer">Brewing timer</a>
+      <a href="#/journal" data-nav="journal">Tasting journal</a>
+    </div></details>
+    <a href="#/map" data-nav="map">Map</a>
+    <details><summary>Read</summary><div class="menu">
+      <a href="#/guide" data-nav="guide">Coffee guide</a>
+      <a href="#/history" data-nav="history">Coffee history</a>
+    </div></details>
+    <a href="#/search" data-nav="search">Search</a>
+    <a href="#/about" data-nav="about">About</a>
+  </nav>
+  <div class="right"><a class="small mute" href="https://github.com/gddickinson/coffee_explorer" target="_blank" rel="noopener">GitHub</a></div>
+</header>
+<main id="app" tabindex="-1"></main>
+<footer class="foot">Coffee Collection Explorer · <a href="https://github.com/gddickinson/coffee_explorer">source on GitHub</a> · <span id="mode"></span></footer>
+<script type="module" src="static/main.js"></script>
+</body>
+</html>

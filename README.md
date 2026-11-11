@@ -120,6 +120,16 @@ A Python-based GUI application for exploring coffee varieties, brewing methods, 
   - Famous coffees from each region
   - Regional descriptions
 
+## Web Interface
+
+Browse the database in a browser (searchable, filterable, cross-linked pages; brewing timer; regions map; guide and
+history): `pip install -r requirements-web.txt && python run_web.py` (http://127.0.0.1:8104, database opened read-only).
+`python scripts/build_static.py` builds the GitHub Pages site; the tasting journal (personal notes) is local-only, never exported.
+
+| Home | Coffee origins | Regions map | Coffee detail | Guide |
+|---|---|---|---|---|
+| ![Home page](docs/img/home.png) | ![Coffee origins with filters](docs/img/coffees.png) | ![World map of coffee regions](docs/img/map.png) | ![Yirgacheffe detail page](docs/img/coffee_1.png) | ![Coffee guide](docs/img/guide.png) |
+
 ## Installation & Requirements
 
 ### Requirements
