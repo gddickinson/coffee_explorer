@@ -15,7 +15,7 @@ from pydantic import BaseModel
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from world_shapes import CONTINENT_POLYGONS  # noqa: E402
+from world_shapes import LAND_POLYGONS, LAND_SOURCE  # noqa: E402
 
 from . import data, journal  # noqa: E402
 from .search import SPECS, facets, filter_rows  # noqa: E402
@@ -129,9 +129,10 @@ def product(item_id: int):
 
 @app.get("/api/world")
 def world():
-    """Continent outlines (lon, lat) from world_shapes.py plus the region markers, for the SVG map."""
+    """Land outlines (Natural Earth 1:110m, via world_shapes.py) plus the region markers, for the SVG map."""
     regs = [{k: r[k] for k in ("id", "name", "country", "latitude", "longitude")} for r in data.rows("regions")]
-    return {"continents": {k: [list(p) for p in v] for k, v in CONTINENT_POLYGONS.items()}, "regions": regs}
+    land = [[[list(p) for p in ring] for ring in poly] for poly in LAND_POLYGONS]
+    return {"land": land, "source": LAND_SOURCE, "regions": regs}
 
 
 @app.get("/api/content/{name}")

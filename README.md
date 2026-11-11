@@ -262,7 +262,7 @@ The application will:
 - **Click** markers to open detailed information window
 - View coordinates, elevation, climate, soil, and famous coffees
 - Explore 15 major coffee-growing regions worldwide
-- **GeoPandas-powered** map creation for accurate geography
+- **Natural Earth 1:110m** land outlines (public domain; see THIRD_PARTY/README.md)
 
 ## Database Structure
 

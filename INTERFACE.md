@@ -15,7 +15,10 @@
 | `tabs/journal_tab.py` | `JournalTabMixin` -- tasting journal CRUD |
 | `tabs/guide_tab.py` | `GuideTabMixin` -- coffee guide + history markdown viewer |
 | `tabs/map_tab.py` | `MapTabMixin` -- interactive world map of regions |
-| `world_shapes.py` | `CONTINENT_POLYGONS` -- simplified continent outlines (pure data; used by map tab and web map) |
+| `world_shapes.py` | `LAND_POLYGONS` (Natural Earth 1:110m land, loaded from `THIRD_PARTY/ne_110m_land.json`), `project()` (equirectangular), `on_land()`; used by map tab and web map |
+| `THIRD_PARTY/` | `ne_110m_land.json` (Natural Earth, public domain) + `README.md` with source and licence |
+| `scripts/convert_natural_earth.py` | Regenerates `THIRD_PARTY/ne_110m_land.json` from the Natural Earth GeoJSON |
+| `web/static/geo.js` | `project()` -- JS copy of the equirectangular projection (+ `geo.test.mjs`) |
 | `coffee_guide.md` | Markdown content for the guide tab |
 | `coffee_history.md` | Markdown content for the history tab |
 | `test_coffee_database.py` | Smoke tests for database creation and queries |

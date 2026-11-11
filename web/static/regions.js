@@ -1,12 +1,14 @@
-// World map of coffee-growing regions (inline SVG, equirectangular, using the desktop app's simplified continent
-// outlines from world_shapes.py) plus a searchable region list and a page per region.
+// World map of coffee-growing regions (inline SVG, equirectangular; Natural Earth 1:110m land outlines served by
+// /api/world from world_shapes.py) plus a searchable region list and a page per region.
 import { route, api, app, esc, list } from './core.js';
 import { listPage, kv, sections, crumb, trim } from './ui.js';
 import { coffeeCard } from './coffees.js';
+import { project } from './geo.js';
 
 const W = 1000, H = 500;
-const px = lon => ((lon + 180) / 360) * W;
-const py = lat => ((90 - lat) / 180) * H;
+const px = lon => project(lon, 0, W, H)[0];
+const py = lat => project(0, lat, W, H)[1];
+const ring = pts => 'M' + pts.map(([lo, la]) => `${px(lo).toFixed(1)},${py(la).toFixed(1)}`).join('L') + 'Z';
 
 // SVG map; regions are links to their pages. focus: id of a region to highlight.
 export function worldSvg(world, focus = null, { crop = null } = {}) {
@@ -15,9 +17,8 @@ export function worldSvg(world, focus = null, { crop = null } = {}) {
   // Tropic lines bound the "coffee belt" (23.4° N / S).
   s += `<rect x="0" y="${py(23.4)}" width="${W}" height="${py(-23.4) - py(23.4)}" class="belt"/>`;
   for (const lat of [23.4, 0, -23.4]) s += `<line x1="0" x2="${W}" y1="${py(lat)}" y2="${py(lat)}" class="${lat ? 'tropic' : 'equator'}"/>`;
-  for (const [name, pts] of Object.entries(world.continents)) {
-    s += `<polygon class="land" points="${pts.map(([lo, la]) => `${px(lo).toFixed(1)},${py(la).toFixed(1)}`).join(' ')}"><title>${esc(name)}</title></polygon>`;
-  }
+  // One path for all land; even-odd fill keeps holes (e.g. the Caspian Sea) open.
+  s += `<path class="land" fill-rule="evenodd" d="${world.land.map(poly => poly.map(ring).join('')).join('')}"/>`;
   for (const r of world.regions) {
     const x = px(r.longitude), y = py(r.latitude), on = r.id === focus;
     s += `<a href="#/region/${r.id}" class="pin${on ? ' on' : ''}" aria-label="${esc(r.name)}, ${esc(r.country)}">
@@ -35,7 +36,7 @@ route('map', async (_args, query) => {
     lead: 'Major growing regions with their coordinates, elevation, climate and soil. Almost all lie in the "coffee belt" between the tropics (shaded). Click a marker or a card.',
     placeholder: 'e.g. volcanic, Ethiopia, monsoon',
     extra: `<div class="stage map">${worldSvg(world)}</div>
-      <p class="small mute">Continent outlines are the simplified shapes drawn by the desktop app; marker positions are the database coordinates.</p>`,
+      <p class="small mute">Land outlines: Natural Earth 1:110m (public domain). Marker positions are the database coordinates.</p>`,
     filters: [{ id: 'country', label: 'Country', options: f.regions.country }],
     card: r => `<a class="card" href="#/region/${r.id}"><small>${esc(r.country)} · ${r.elevation_min}–${r.elevation_max} m</small>
       <b>${esc(r.name)}</b><span>${esc(trim(r.description, 110))}</span></a>`,

@@ -4,10 +4,9 @@ Coffee Explorer - Interactive world map tab.
 
 import tkinter as tk
 from tkinter import ttk, scrolledtext
-from pathlib import Path
 from PIL import Image, ImageTk, ImageDraw
 
-from world_shapes import CONTINENT_POLYGONS
+from world_shapes import LAND_POLYGONS, project
 
 
 class MapTabMixin:
@@ -36,107 +35,18 @@ class MapTabMixin:
     # ── Map image creation ───────────────────────────────────────────
 
     def get_world_map_image(self, width, height):
-        cache_dir = Path.home() / '.coffee_explorer'
-        cache_dir.mkdir(exist_ok=True)
-        map_file = cache_dir / 'world_map.png'
+        """Draw the land (Natural Earth 1:110m, see world_shapes.py) on an equirectangular canvas.
 
-        if map_file.exists():
-            try:
-                img = Image.open(map_file)
-                if img.size == (width, height):
-                    return img
-            except (IOError, OSError, Image.DecompressionBombError):
-                pass
-
-        print("Attempting to create world map...")
-        return self._create_geopandas_world_map(width, height, map_file)
-
-    def _create_geopandas_world_map(self, width, height, save_path):
-        """Create a world map using GeoPandas with manual continent polygons."""
-        try:
-            import matplotlib
-            matplotlib.use('Agg')
-            import matplotlib.pyplot as plt
-            import geopandas as gpd
-            from shapely.geometry import Polygon
-
-            continents_data = self._continent_polygons()
-
-            geometries = []
-            names = []
-            for name, coords in continents_data.items():
-                geometries.append(Polygon(coords))
-                names.append(name)
-
-            world = gpd.GeoDataFrame({'name': names, 'geometry': geometries})
-
-            dpi = 100
-            fig, ax = plt.subplots(figsize=(width / dpi, height / dpi), dpi=dpi)
-            world.plot(ax=ax, color='#c8b896', edgecolor='#8b7355',
-                       linewidth=0.8, alpha=0.92)
-            ax.set_facecolor('#d4e8f7')
-            fig.patch.set_facecolor('#d4e8f7')
-            ax.set_xticks([])
-            ax.set_yticks([])
-            for spine in ax.spines.values():
-                spine.set_visible(False)
-            ax.set_xlim(-180, 180)
-            ax.set_ylim(-90, 90)
-            plt.tight_layout(pad=0)
-            plt.savefig(save_path, dpi=dpi, bbox_inches='tight', pad_inches=0,
-                        facecolor='#d4e8f7')
-            plt.close(fig)
-
-            img = Image.open(save_path)
-            img = img.resize((width, height), Image.Resampling.LANCZOS)
-            img.save(save_path)
-            return img
-
-        except Exception as e:
-            print(f"Error creating GeoPandas map: {e}")
-            return self._create_custom_world_map(width, height)
-
-    @staticmethod
-    def _continent_polygons():
-        return CONTINENT_POLYGONS
-
-    def _create_custom_world_map(self, width, height):
-        """Fallback: draw a simple world map with PIL."""
+        Uses the same projection as the region markers, so markers sit on the right coastlines.
+        """
         img = Image.new('RGB', (width, height), color='#d4e8f7')
         draw = ImageDraw.Draw(img)
-
-        shapes = {
-            'Africa': [
-                (0.47, 0.33), (0.54, 0.32), (0.56, 0.38), (0.57, 0.50),
-                (0.55, 0.65), (0.52, 0.70), (0.48, 0.72), (0.45, 0.68),
-                (0.44, 0.58), (0.43, 0.48), (0.45, 0.38), (0.47, 0.33),
-            ],
-            'South America': [
-                (0.24, 0.48), (0.30, 0.47), (0.32, 0.52), (0.31, 0.62),
-                (0.28, 0.72), (0.25, 0.75), (0.22, 0.72), (0.21, 0.62),
-                (0.22, 0.52), (0.24, 0.48),
-            ],
-            'Asia': [
-                (0.55, 0.15), (0.85, 0.15), (0.90, 0.25), (0.87, 0.35),
-                (0.82, 0.42), (0.77, 0.45), (0.70, 0.45), (0.65, 0.48),
-                (0.60, 0.52), (0.55, 0.50), (0.52, 0.45), (0.50, 0.35),
-                (0.52, 0.25), (0.55, 0.15),
-            ],
-            'North America': [
-                (0.15, 0.20), (0.28, 0.18), (0.32, 0.25), (0.30, 0.35),
-                (0.25, 0.42), (0.20, 0.45), (0.15, 0.42), (0.12, 0.35),
-                (0.13, 0.25), (0.15, 0.20),
-            ],
-            'Australia': [
-                (0.72, 0.60), (0.82, 0.58), (0.85, 0.62), (0.84, 0.68),
-                (0.80, 0.72), (0.75, 0.73), (0.71, 0.70), (0.70, 0.64),
-                (0.72, 0.60),
-            ],
-        }
-
-        for pts in shapes.values():
-            draw.polygon([(width * x, height * y) for x, y in pts],
-                         fill='#c8b896', outline='#8b7355', width=2)
+        for outer, *holes in LAND_POLYGONS:
+            draw.polygon([project(lon, lat, width, height) for lon, lat in outer],
+                         fill='#c8b896', outline='#8b7355')
+            for hole in holes:
+                draw.polygon([project(lon, lat, width, height) for lon, lat in hole],
+                             fill='#d4e8f7', outline='#8b7355')
         return img
 
     # ── Map rendering with markers ───────────────────────────────────
@@ -152,8 +62,7 @@ class MapTabMixin:
             regions = cursor.fetchall()
 
             for region in regions:
-                x = int((region['longitude'] + 180) * (width / 360))
-                y = int((90 - region['latitude']) * (height / 180))
+                x, y = (int(v) for v in project(region['longitude'], region['latitude'], width, height))
                 marker_size = 12
 
                 # Shadow / glow

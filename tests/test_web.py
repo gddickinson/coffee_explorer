@@ -107,7 +107,7 @@ def test_details_and_links():
     prods = client.get(f"/api/roasters/{sb['roaster_id']}").json()["products"]
     assert prods and all(p["roaster_id"] == sb["roaster_id"] for p in prods)
     w = client.get("/api/world").json()
-    assert len(w["regions"]) == 15 and "Africa" in w["continents"]
+    assert len(w["regions"]) == 15 and len(w["land"]) > 100 and "Natural Earth" in w["source"]
     assert client.get("/api/content/guide").json()["markdown"].startswith("# Complete Coffee Guide")
 
 
@@ -155,3 +155,19 @@ def test_static_search_parity(tmp_path):
         want = [row[SPECS[kind]["id"]] for row in client.get(f"/api/{kind}", params=q).json()]
         assert got == want, (kind, q)
         assert want, (kind, q)  # every case should exercise a non-empty result
+
+
+def test_map_projection_and_alignment():
+    """Natural Earth land outlines and region markers share one equirectangular projection; markers land on land."""
+    import world_shapes as ws
+    assert ws.project(-180, 90, 1000, 500) == (0, 0) and ws.project(180, -90, 1000, 500) == (1000, 500)
+    assert ws.project(0, 0, 1000, 500) == (500, 250)
+    x, y = ws.project(38.5, 6.0, 1200, 600)  # Sidamo/Gedeo, Ethiopia
+    assert abs(x - 728.333) < 1e-3 and abs(y - 280.0) < 1e-3
+    for r in data.rows("regions"):
+        assert ws.on_land(r["longitude"], r["latitude"]), r["name"]
+    for lon, lat in [(0, 0), (-150, 0), (-30, 30), (80, -30), (-140, -40)]:  # open ocean
+        assert not ws.on_land(lon, lat), (lon, lat)
+    for lon, lat in [(20, 0), (-100, 40), (135, -25), (-60, -10), (100, 60)]:  # continental interiors
+        assert ws.on_land(lon, lat), (lon, lat)
+    assert ws.LAND_FILE.stat().st_size < 150_000
