@@ -42,6 +42,7 @@
 | `scripts/build_static.py` | Exports the static site to `site/` (all `STATIC_ENDPOINTS` as JSON) |
 | `scripts/screenshots.py` | Playwright smoke test + README screenshots (`docs/img/`) |
 | `tests/test_web.py` | Web tests: endpoints, filters, read-only DB, journal, static build, JS tests, JS/Python search parity |
+| `tests/test_web_browser.py` | Playwright checks on the static build: map markers keep their colour, no nested links (skips without a browser) |
 | `.github/workflows/pages.yml` | Test, build and publish the static site on push to main |
 
 ## Key Classes

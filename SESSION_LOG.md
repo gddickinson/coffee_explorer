@@ -26,3 +26,12 @@
   inland control points, data file < 150 kB.
 - Tests: `tests/test_web.py` 188 passed; `test_coffee_database.py` 7 passed; node tests ok; screenshots
   (static 23 routes, server 16 routes) all ok, no phone overflow.
+
+## 2026-11-11 -- Fix black map markers on the home page
+- The home map stripped the region `<a>` links (it sits inside one big link) with a regex, which also removed the
+  `pin` class, so markers fell back to the default black fill. The `pin` class now sits on an inner `<g>` and
+  `worldSvg(..., { links: false })` omits the links; hover styling targets `a:hover .pin`.
+- New `tests/test_web_browser.py` (Playwright, static build): computed marker fill on home, map and region pages, and
+  no nested links. It failed on the home page before the fix and passes after.
+- Tests: test_web 188 passed, test_web_browser 3 passed, test_coffee_database 7 passed, node tests ok; screenshots
+  (static and local server) all ok, no phone overflow.

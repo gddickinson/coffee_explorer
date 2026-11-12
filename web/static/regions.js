@@ -10,8 +10,9 @@ const px = lon => project(lon, 0, W, H)[0];
 const py = lat => project(0, lat, W, H)[1];
 const ring = pts => 'M' + pts.map(([lo, la]) => `${px(lo).toFixed(1)},${py(la).toFixed(1)}`).join('L') + 'Z';
 
-// SVG map; regions are links to their pages. focus: id of a region to highlight.
-export function worldSvg(world, focus = null, { crop = null } = {}) {
+// SVG map; regions are links to their pages unless links=false (e.g. inside another link). focus: region to highlight.
+// The pin class sits on an inner <g> so markers keep their style with or without the <a> wrapper.
+export function worldSvg(world, focus = null, { crop = null, links = true } = {}) {
   const view = crop ? crop.join(' ') : `0 0 ${W} ${H}`;
   let s = `<svg class="world" viewBox="${view}" role="img" aria-label="World map of coffee-growing regions">`;
   // Tropic lines bound the "coffee belt" (23.4° N / S).
@@ -21,9 +22,9 @@ export function worldSvg(world, focus = null, { crop = null } = {}) {
   s += `<path class="land" fill-rule="evenodd" d="${world.land.map(poly => poly.map(ring).join('')).join('')}"/>`;
   for (const r of world.regions) {
     const x = px(r.longitude), y = py(r.latitude), on = r.id === focus;
-    s += `<a href="#/region/${r.id}" class="pin${on ? ' on' : ''}" aria-label="${esc(r.name)}, ${esc(r.country)}">
-      <circle cx="${x}" cy="${y}" r="${on ? 11 : 8}" class="halo"/><circle cx="${x}" cy="${y}" r="${on ? 6 : 4.5}" class="dot"/>
-      <title>${esc(r.name)} (${esc(r.country)})</title></a>`;
+    const pin = `<g class="pin${on ? ' on' : ''}"><circle cx="${x}" cy="${y}" r="${on ? 11 : 8}" class="halo"/>
+      <circle cx="${x}" cy="${y}" r="${on ? 6 : 4.5}" class="dot"/><title>${esc(r.name)} (${esc(r.country)})</title></g>`;
+    s += links ? `<a href="#/region/${r.id}" aria-label="${esc(r.name)}, ${esc(r.country)}">${pin}</a>` : pin;
   }
   return s + `<text x="${W - 8}" y="${py(23.4) - 6}" text-anchor="end" class="axisl">Tropic of Cancer</text>
     <text x="${W - 8}" y="${py(-23.4) + 16}" text-anchor="end" class="axisl">Tropic of Capricorn</text></svg>`;

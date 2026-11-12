@@ -37,7 +37,7 @@ route('home', async () => {
   </div>
   <div class="grid wide">${list(DOORS, ([href, t, d, k]) => `<a class="card door" href="${href}"><b>${t}${k ? ` <em class="n">${s[k]}</em>` : ''}</b><span>${d}</span></a>`)}</div>
   <h2>Where coffee grows</h2>
-  <a class="stage map" href="#/map" aria-label="Open the regions map">${worldSvg(world).replace(/<a [^>]*>|<\/a>/g, '')}</a>`;
+  <a class="stage map" href="#/map" aria-label="Open the regions map">${worldSvg(world, null, { links: false })}</a>`;
   document.getElementById('hsearch').addEventListener('submit', e => {
     e.preventDefault();
     location.hash = '#/search?q=' + encodeURIComponent(document.getElementById('hs-q').value.trim());

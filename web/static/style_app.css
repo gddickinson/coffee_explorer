@@ -28,7 +28,7 @@ svg.world .equator { stroke:rgba(79,209,197,.25); }
 svg.world .axisl { fill:var(--mute); font:11px var(--mono); }
 svg.world .pin .halo { fill:rgba(255,107,107,.25); }
 svg.world .pin .dot { fill:var(--accent2); stroke:#fff; stroke-width:1.2; }
-svg.world .pin:hover .dot, svg.world .pin:focus .dot, svg.world .pin.on .dot { fill:var(--accent); }
+svg.world a:hover .pin .dot, svg.world a:focus .pin .dot, svg.world .pin.on .dot { fill:var(--accent); }
 svg.world .pin.on .halo { fill:rgba(255,180,84,.35); }
 .doc { grid-template-columns:260px 1fr; }
 .toc { position:sticky; top:80px; max-height:calc(100vh - 100px); overflow:auto; margin:0; }
